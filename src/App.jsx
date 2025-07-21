@@ -3,21 +3,29 @@ import moviesList from "./assets/data/movies";
 
 function App() {
     const [Titles, setTitles] = useState("");
-    const [movies, setMovies] = useState(moviesList);
+    const [selectedGenre, setSelectedGenre] = useState("");
     const [filteredMovies, setFilteredMovies] = useState(moviesList);
     const [querySearch, setQuerySearch] = useState("");
 
     useEffect(() => {}, []);
 
     const handleFilterChange = (e) => {
-        setFilteredMovies(
-            movies.filter((movie) => movie.genre == e.target.value)
-        );
+        if (e.target.value === "") {
+            setFilteredMovies(moviesList); // Mostra tutti i film
+        } else {
+            setFilteredMovies(
+                moviesList.filter((movie) => movie.genre == e.target.value)
+            );
+        }
     };
 
     const handleInputChange = (e) => {
         setTitles(e.target.value);
         console.log(e.target.value);
+    };
+
+    const handleGenreChange = (e) => {
+        setSelectedGenre(e.target.value);
     };
 
     const handleFormSubmit = (e) => {
@@ -28,12 +36,17 @@ function App() {
             return;
         }
 
-        setMovies([...movies, { title: Titles }]);
+        const newMovie = { title: Titles, genre: selectedGenre };
+        const newMovies = [...filteredMovies, newMovie];
+        setFilteredMovies(newMovies);
         setTitles("");
+        setSelectedGenre("");
     };
 
     const handleDelete = (name) => {
-        setMovies([...movies.filter((movie) => movie.title !== name)]);
+        setFilteredMovies([
+            ...filteredMovies.filter((movie) => movie.title !== name),
+        ]);
     };
     return (
         <>
@@ -46,15 +59,15 @@ function App() {
                             onChange={handleFilterChange}
                             name="genre-filter"
                         >
-                            <option defaultValue="">Seleziona un genere</option>
+                            <option value="">Seleziona un genere</option>
                             <option value="Fantascienza">Fantascienza</option>
                             <option value="Thriller">Thriller</option>
                             <option value="Romantico">Romantico</option>
                             <option value="Azione">Azione</option>
                         </select>
                     </form>
-                    <form onSubmit={handleFormSubmit}>
-                        <select name="genre">
+                    <form onSubmit={handleFormSubmit} className="form">
+                        <select name="genre" onChange={handleGenreChange}>
                             <option defaultValue="">Seleziona un genere</option>
                             <option value="Fantascienza">Fantascienza</option>
                             <option value="Thriller">Thriller</option>
